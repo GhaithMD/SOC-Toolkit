@@ -160,11 +160,11 @@ Select an option [1-3]:
 
 - The toolkit is built to be **CLI-first**, fast, and easy for L1 analysts.
 - Additional modules can be plugged into `soc_toolkit.py` as the project grows:
-  - EDR triage helpers
+  - Report Generation
   - Timeline generators
   - Playbook-driven response checklists
 
-Contributions, ideas, and feedback are welcome—especially from analysts working in real SOC environments.
+Contributions, ideas, and feedback are welcome especially from analysts working in real SOC environments.
 
 # SOC-Toolkit
 Fully dependable toolkit that improves speed, accuracy, and efficiency in SOC operations.
