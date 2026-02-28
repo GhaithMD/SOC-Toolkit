@@ -9,9 +9,6 @@ Designed to consume the IOC JSON exported by `soc_behavioral_analyzer_.py`:
 Supports:
 - VirusTotal v3: IP + file hash reputation
 - AbuseIPDB v2: IP abuse reputation
-
-Optional:
-- python-docx for nicely formatted Word reports (.docx). If missing, CLI output still works and you can skip -o.
 """
 
 from __future__ import annotations
