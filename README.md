@@ -1,10 +1,13 @@
 ## SOC Toolkit
 
 A lightweight, console-based toolkit to speed up Level 1 SOC investigations.  
-It focuses on two core tasks:
+It covers the full L1 flow:
 
 - **Alert triage & behavioral analysis**
 - **IOC reputation & contextual enrichment**
+- **Client incident report generation**
+- **Playbook / checklist** (step-by-step per detection type)
+- **Timeline builder** (sort events by time for ticket or report)
 
 Everything is driven from a single entrypoint script: `soc_toolkit.py`.
 
@@ -14,7 +17,7 @@ Everything is driven from a single entrypoint script: `soc_toolkit.py`.
 
 - **Unified console (`soc_toolkit.py`)**
   - One command to launch the toolkit.
-  - Simple menu: pick behavioral analysis or IOC enrichment.
+  - Simple menu: behavioral analyzer, IOC enrichment, report generation, playbook, timeline builder.
   - Designed so L1 analysts don’t need to remember Python commands.
 
 - **SOC Behavioral Analyzer (`soc_behavioral_analyzer_.py`)**
@@ -48,14 +51,38 @@ Everything is driven from a single entrypoint script: `soc_toolkit.py`.
       - ASN, ISP, country, network, hostnames (for IPs)
     - Ready to attach to tickets or hand over to L2.
 
+- **Report Generation (`report_generation.py`)**
+  - Builds a **client-facing Word report** (.docx) after an alert/incident investigation.
+  - **Interactive prompts** with examples for each field:
+    - Alert number, report date, case title, alert ID, GLPI ID, creation date
+    - Description, preuve (screenshots/evidence), actif source, actif destination, recommendation
+  - **Document layout**:
+    - Word **header** on every page (e.g. `Alert 02  28-02-2026`)
+    - **Vertical summary table** (Champ | Valeur) with consistent margins and spacing
+    - Editable in Word so you can add screenshots or adjust text before sending to the client
+  - Requires `python-docx` (same as IOC enrichment Word export).
+
+- **Playbook / Checklist (`playbook_runner.py`)**
+  - **Step-by-step checklists** per detection type (aligned with the Behavioral Analyzer):
+    - Brute Force, Port Scan, Credential Access, Web Attack, Malware/C2, Lateral Movement, Persistence, Execution, Defense Evasion, Reconnaissance, Exfiltration, Privilege Escalation, Phishing, Other/General.
+  - Optional **severity** input (CRITICAL/HIGH/MEDIUM/LOW) for context.
+  - **Export to .txt** so you can attach the checklist to the ticket or tick steps offline.
+  - Use after triage to know what to do next without losing time.
+
+- **Timeline Builder (`timeline_builder.py`)**
+  - **Paste event lines** (each line can start with a timestamp); get a **sorted timeline**.
+  - Supports common formats: `2026-02-28 14:32:00`, `28-02-2026 14:35`, `2026-02-28T14:32:00Z`, `28/02/2026 14:32`.
+  - **Export to .txt** for pasting into the ticket or client report.
+  - Type `END` or two empty lines when done pasting.
+
 ---
 
 ### Requirements
 
 - **Python**: 3.9+ recommended
 - **Dependencies**:
-  - Standard library only for core functions.
-  - Optional for Word export:
+  - Standard library only for behavioral analyzer and toolkit menu.
+  - **Word reports** (IOC enrichment + Report Generation) require:
     ```bash
     pip install python-docx
     ```
@@ -108,12 +135,18 @@ Single-console helper for L1 investigations.
 Tools included:
   [1] SOC Behavioral Analyzer
   [2] IOC Enrichment (VirusTotal + AbuseIPDB)
+  [3] Report Generation (client incident report)
+  [4] Playbook / Checklist (L1 steps per detection type)
+  [5] Timeline Builder (sort events by time)
 
 Main menu:
   [1] Run SOC Behavioral Analyzer
   [2] Run IOC Enrichment
-  [3] Exit
-Select an option [1-3]:
+  [3] Run Report Generation (client incident report)
+  [4] Run Playbook / Checklist
+  [5] Run Timeline Builder
+  [6] Exit
+Select an option [1-6]:
 ```
 
 ---
@@ -154,17 +187,34 @@ Select an option [1-3]:
 
    - Save the `.docx` report and attach it to your ticket.
 
+4. **Option 3 – Report Generation** (client incident report):
+   - From the toolkit menu choose Report Generation.
+   - Answer the prompts (case title, alert ID, GLPI ID, description, preuve, actif source/destination, recommendation, etc.); each prompt shows an example.
+   - Choose an output filename (default uses alert number and date).
+   - Open the generated Word file, add screenshots or tweak text if needed, then send it to the client.
+
+5. **Option 4 – Playbook / Checklist**:
+   - From the toolkit menu choose Playbook.
+   - Select a detection type by number (e.g. 1 = Brute Force) or name; optionally enter severity.
+   - Copy the checklist from the console or export to a .txt file and attach to your ticket.
+
+6. **Option 5 – Timeline Builder**:
+   - From the toolkit menu choose Timeline Builder.
+   - Paste lines that start with a timestamp (e.g. from SIEM or logs); type `END` when done.
+   - Copy the sorted timeline or export to .txt, then paste into your ticket or report.
+
 ---
 
 ### Notes & Future Plans
 
 - The toolkit is built to be **CLI-first**, fast, and easy for L1 analysts.
-- Additional modules can be plugged into `soc_toolkit.py` as the project grows:
-  - Report Generation
-  - Timeline generators
-  - Playbook-driven response checklists
+- Possible future additions:
+  - Containment suggestions from enrichment results
+  - Phishing/URL quick check
+  - Evidence/screenshot organizer for reports
+  - EDR triage helpers
 
-Contributions, ideas, and feedback are welcome especially from analysts working in real SOC environments.
+Contributions, ideas, and feedback are welcome—especially from analysts working in real SOC environments.
 
 # SOC-Toolkit
 Fully dependable toolkit that improves speed, accuracy, and efficiency in SOC operations.
